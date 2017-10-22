@@ -118,10 +118,23 @@ class HelpersPlugin extends Omeka_Plugin_AbstractPlugin
 
     public function filterItemPrevious($item, $args = array())
     {
+        static $items = array();
+
+        if (is_admin_theme()) {
+            return;
+        }
+
         if (!empty($item)) {
             return $item;
         }
+
         $item = $args['item'];
+
+        // Avoid an infinite loop in some cases.
+        if (isset($items[$item->id])) {
+            return $items[$item->id];
+        }
+
         if (plugin_is_active('ItemOrder')) {
             $previousItem = get_view()->getPreviousItem($item);
         } else {
@@ -130,15 +143,30 @@ class HelpersPlugin extends Omeka_Plugin_AbstractPlugin
             $byCollection = get_option('helpers_order_by_collection');
             $previousItem = get_view()->getPreviousItem($item, $elementSetName, $elementName, $byCollection);
         }
-        return $previousItem ;
+
+        $items[$item->id] = $previousItem;
+        return $previousItem;
     }
 
     public function filterItemNext($item, $args = array())
     {
+        static $items = array();
+
+        if (is_admin_theme()) {
+            return;
+        }
+
         if (!empty($item)) {
             return $item;
         }
+
         $item = $args['item'];
+
+        // Avoid an infinite loop in some cases.
+        if (isset($items[$item->id])) {
+            return $items[$item->id];
+        }
+
         if (plugin_is_active('ItemOrder')) {
             $nextItem = get_view()->getNextItem($item);
         } else {
@@ -147,6 +175,8 @@ class HelpersPlugin extends Omeka_Plugin_AbstractPlugin
             $byCollection = get_option('helpers_order_by_collection');
             $nextItem = get_view()->getNextItem($item, $elementSetName, $elementName, $byCollection);
         }
-        return $nextItem ;
+
+        $items[$item->id] = $nextItem;
+        return $nextItem;
     }
 }
