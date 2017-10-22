@@ -32,14 +32,16 @@ class Helpers_View_Helper_GetPreviousItem extends Zend_View_Helper_Abstract
         }
 
         // Order via item order plugin.
-        if (empty($elementSetName)
-                && $item->collection_id
-                && plugin_is_active('ItemOrder')
-            ) {
-            $previous = $this-> _getPreviousItemViaItemOrder($item);
-            return $previous !== false
-                ? $previous
-                : $item->previous();
+        if (empty($elementSetName)) {
+            if ($item->collection_id && plugin_is_active('ItemOrder')) {
+                $previous = $this-> _getPreviousItemViaItemOrder($item);
+                if ($previous !== false) {
+                    return $previous;
+                }
+            }
+            $elementSetName = get_option('helpers_order_element_set_name');
+            $elementName = get_option('helpers_order_element_name');
+            $byCollection = get_option('helpers_order_by_collection');
         }
 
         // Else default order.
@@ -158,30 +160,43 @@ class Helpers_View_Helper_GetPreviousItem extends Zend_View_Helper_Abstract
      */
     protected function _getPreviousItemViaItemOrder($item)
     {
-        if ($item->collection_id) {
-            $itemOrderTable = get_db()->getTable('ItemOrder_ItemOrder');
-            $itemsArray = $itemOrderTable->fetchOrderedItems($item->collection_id);
-            if ($itemsArray) {
-                $prev = 0;
-                foreach ($itemsArray as $itemArray) {
-                    $itemArrayId = $itemArray['id'];
-                    if ($itemArrayId == $item->id) {
-                        if ($prev) {
-                            return get_record_by_id('Item', $prev);
-                        }
-                        // Get the last of the previous collection.
-                        else {
-                            $collection_id = $this->_getPreviousCollectionId($item->collection_id);
-                            if ($collection_id) {
-                                return get_view()->getItemInCollection($collection_id, 'last');
-                            }
-                            // Else this is the first collection, so return empty result.
-                            return '';
-                        }
-                    }
-                    $prev = $itemArrayId;
-                }
+        if (!$item->collection_id) {
+            return false;
+        }
+
+        // Check if there is an order by collection, because the function
+        // returns the reverse order else.
+        $db = get_db();
+        $itemOrderTable = $db->getTable('ItemOrder_ItemOrder');
+        $alias = $itemOrderTable->getTableAlias();
+        $select = $itemOrderTable->getSelectForCount(array('collection_id', $item->collection_id));
+        $result = $itemOrderTable->fetchOne($select);
+        if (empty($result)) {
+            return false;
+        }
+
+        $itemsArray = $itemOrderTable->fetchOrderedItems($item->collection_id);
+        if (empty($itemsArray)) {
+            return false;
+        }
+
+        foreach ($itemsArray as $key => $orderedItem) {
+            if ($orderedItem['id'] != $item->id) {
+                continue;
             }
+
+            if ($key != 0) {
+                return get_record_by_id('Item', $itemsArray[$key - 1]['id']);
+            }
+
+            // Get the last of the previous collection.
+            $collection_id = $this->_getPreviousCollectionId($item->collection_id);
+            if ($collection_id) {
+                return get_view()->getItemInCollection($collection_id, 'last');
+            }
+
+            // Else this is the first collection, so return empty result.
+            return '';
         }
 
         return false;

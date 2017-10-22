@@ -117,16 +117,12 @@ class HelpersPlugin extends Omeka_Plugin_AbstractPlugin
         }
     }
 
-    public function filterItemPrevious($item, $args = array())
+    public function filterItemPrevious($value, array $args)
     {
         static $items = array();
 
         if (is_admin_theme()) {
             return;
-        }
-
-        if (!empty($item)) {
-            return $item;
         }
 
         $item = $args['item'];
@@ -136,29 +132,17 @@ class HelpersPlugin extends Omeka_Plugin_AbstractPlugin
             return $items[$item->id];
         }
 
-        if (plugin_is_active('ItemOrder')) {
-            $previousItem = get_view()->getPreviousItem($item);
-        } else {
-            $elementSetName = get_option('helpers_order_element_set_name');
-            $elementName = get_option('helpers_order_element_name');
-            $byCollection = get_option('helpers_order_by_collection');
-            $previousItem = get_view()->getPreviousItem($item, $elementSetName, $elementName, $byCollection);
-        }
-
+        $previousItem = get_view()->getPreviousItem($item);
         $items[$item->id] = $previousItem;
         return $previousItem;
     }
 
-    public function filterItemNext($item, $args = array())
+    public function filterItemNext($value, $args = array())
     {
         static $items = array();
 
         if (is_admin_theme()) {
             return;
-        }
-
-        if (!empty($item)) {
-            return $item;
         }
 
         $item = $args['item'];
@@ -168,15 +152,7 @@ class HelpersPlugin extends Omeka_Plugin_AbstractPlugin
             return $items[$item->id];
         }
 
-        if (plugin_is_active('ItemOrder')) {
-            $nextItem = get_view()->getNextItem($item);
-        } else {
-            $elementSetName = get_option('helpers_order_element_set_name');
-            $elementName = get_option('helpers_order_element_name');
-            $byCollection = get_option('helpers_order_by_collection');
-            $nextItem = get_view()->getNextItem($item, $elementSetName, $elementName, $byCollection);
-        }
-
+        $nextItem = get_view()->getNextItem($item);
         $items[$item->id] = $nextItem;
         return $nextItem;
     }

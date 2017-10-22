@@ -32,14 +32,16 @@ class Helpers_View_Helper_GetNextItem extends Zend_View_Helper_Abstract
         }
 
         // Order via item order plugin.
-        if (empty($elementSetName)
-                && $item->collection_id
-                && plugin_is_active('ItemOrder')
-            ) {
-            $next = $this-> _getNextItemViaItemOrder($item);
-            return $next !== false
-                ? $next
-                : $item->next();
+        if (empty($elementSetName)) {
+            if ($item->collection_id && plugin_is_active('ItemOrder')) {
+                $next = $this-> _getNextItemViaItemOrder($item);
+                if ($next !== false) {
+                    return $next;
+                }
+            }
+            $elementSetName = get_option('helpers_order_element_set_name');
+            $elementName = get_option('helpers_order_element_name');
+            $byCollection = get_option('helpers_order_by_collection');
         }
 
         // Else default order.
@@ -157,30 +159,45 @@ class Helpers_View_Helper_GetNextItem extends Zend_View_Helper_Abstract
      */
     protected function _getNextItemViaItemOrder($item)
     {
-        if ($item->collection_id) {
-            $itemOrderTable = get_db()->getTable('ItemOrder_ItemOrder');
-            $itemsArray = $itemOrderTable->fetchOrderedItems($item->collection_id);
-            if ($itemsArray) {
-                $next = 0;
-                foreach ($itemsArray as $itemArray) {
-                    $itemArrayId = $itemArray['id'];
-                    if ($next) {
-                        return get_record_by_id('Item', $itemArrayId);
-                    }
-                    if ($itemArrayId == $item->id) {
-                        $next = true;
-                    }
-                }
-                // Get the first of the next collection.
-                if ($next) {
-                    $collection_id = $this->_getNextCollectionId($item->collection_id);
-                    if ($collection_id) {
-                        return get_view()->getItemInCollection($collection_id, 'first');
-                    }
-                    // Else this is the first collection, so return empty result.
-                    return '';
-                }
+        if (!$item->collection_id) {
+            return false;
+        }
+
+        // Check if there is an order by collection, because the function
+        // returns the reverse order else.
+        $db = get_db();
+        $itemOrderTable = $db->getTable('ItemOrder_ItemOrder');
+        $alias = $itemOrderTable->getTableAlias();
+        $select = $itemOrderTable->getSelectForCount(array('collection_id', $item->collection_id));
+        $result = $itemOrderTable->fetchOne($select);
+        if (empty($result)) {
+            return false;
+        }
+
+        $itemsArray = $itemOrderTable->fetchOrderedItems($item->collection_id);
+        if (empty($itemsArray)) {
+            return false;
+        }
+
+        foreach ($itemsArray as $key => $orderedItem) {
+            if ($orderedItem['id'] != $item->id) {
+                continue;
             }
+
+            end($itemsArray);
+            $last = key($itemsArray);
+            if ($key != $last) {
+                return get_record_by_id('Item', $itemsArray[$key + 1]['id']);
+            }
+
+            // Get the first of the next collection.
+            $collection_id = $this->_getNextCollectionId($item->collection_id);
+            if ($collection_id) {
+                return get_view()->getItemInCollection($collection_id, 'first');
+            }
+
+            // Else this is the last collection, so return empty result.
+            return '';
         }
 
         return false;
