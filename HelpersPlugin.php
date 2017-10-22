@@ -98,14 +98,15 @@ class HelpersPlugin extends Omeka_Plugin_AbstractPlugin
     {
         $post = $args['post'];
 
-        if (!empty($post['helpers_order_element'])) {
+        if (empty($post['helpers_order_element'])) {
+            $post['helpers_order_element_set_name'] = '';
+            $post['helpers_order_element_name'] = '';
+        } else {
             $orderElement = get_db()->getTable('Element')
                 ->find((int) $args['post']['helpers_order_element']);
             if ($orderElement) {
-                $post['helpers_order_element_set_name'] = $orderElement
-                    ->getElementSet()->name;
-                $post['helpers_order_element_name'] = $orderElement
-                    ->name;
+                $post['helpers_order_element_set_name'] = $orderElement->getElementSet()->name;
+                $post['helpers_order_element_name'] = $orderElement->name;
             }
         }
 
