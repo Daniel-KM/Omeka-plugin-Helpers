@@ -2,7 +2,7 @@
 /**
  * Various tools to help builders of plugins and themes.
  *
- * @copyright Daniel Berthereau 2012-2017
+ * @copyright Daniel Berthereau 2012-2018
  * @license http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.txt
  */
 
@@ -17,7 +17,6 @@ class HelpersPlugin extends Omeka_Plugin_AbstractPlugin
      * @var array Hooks for the plugin.
      */
     protected $_hooks = array(
-        'initialize',
         'install',
         'uninstall',
         'config_form',
@@ -40,14 +39,6 @@ class HelpersPlugin extends Omeka_Plugin_AbstractPlugin
         'helpers_order_element_name' => 'Title',
         'helpers_order_by_collection' => true,
     );
-
-    public function hookInitialize()
-    {
-        require_once dirname(__FILE__)
-            . DIRECTORY_SEPARATOR . 'libraries'
-            . DIRECTORY_SEPARATOR . 'Helpers'
-            . DIRECTORY_SEPARATOR . 'helpers.php';
-    }
 
     /**
      * Installs the plugin.

@@ -31,8 +31,21 @@ plugin. It will be used with standard functions `link_to_previous_item_show()`
 and `link_to_next_item_show()` and standard methods `$item->previous()` and
 `$item->next()`.
 
-For more flexibility, you can use the functions `link_to_previous()` and `link_to_next()`,
-or the view helpers `$this->getNextItem()` and `$this->getNextItem()`.
+For more flexibility, you can use the view helpers `$this->getNextItem()` and
+`$this->getNextItem()`.
+
+
+Update for version 2.12
+-----------------------
+
+The functions `link_to_previous()` and `link_to_next()` have been removed since
+version 2.12 due to a possible incompatibility with Geolocation (see [issues/1]).
+So replace them with the view helpers above, or include the file `libraries/Helpers/helpers.php`
+inside the file `custom.php` of your theme, or inside a specific plugin:
+
+```php
+include_once '../../plugins/Helpers/libraries/Helpers/helpers.php';
+```
 
 
 Warning
@@ -84,11 +97,12 @@ Current maintainers:
 Copyright
 ---------
 
-* Copyright Daniel Berthereau, 2012-2017
+* Copyright Daniel Berthereau, 2012-2018
 
 
 [Helpers]: https://github.com/Daniel-KM/Omeka-plugin-Helpers
-[Omeka]: https://omeka.org
+[Omeka]: https://omeka.org/classic
+[issues/1]: https://github.com/Daniel-KM/Omeka-plugin-Helpers/issues/1
 [plugin issues]: https://github.com/Daniel-KM/Omeka-plugin-Helpers/issues
 [CeCILL v2.1]: https://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
 [GNU/GPL]: https://www.gnu.org/licenses/gpl-3.0.html
