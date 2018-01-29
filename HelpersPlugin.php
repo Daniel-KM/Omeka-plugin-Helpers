@@ -1,4 +1,4 @@
- <?php
+<?php
 /**
  * Various tools to help builders of plugins and themes.
  *
