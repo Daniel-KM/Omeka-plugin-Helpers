@@ -9,7 +9,7 @@
  *
  * @package Omeka\Function\View\Navigation
  * @uses link_to()
- * @param Record|string $record
+ * @param Omeka_Record_AbstractRecord|string $record
  * @param array $order If empty, uses the order of the plugin ItemOrder if
  * enabled, or the default order set in the config of the plugin. Else, it
  * should be an array with an element set name and an element name, with an
@@ -84,7 +84,7 @@ function link_to_previous($record = null, $order = array(), $text = null, $props
  *
  * @package Omeka\Function\View\Navigation
  * @uses link_to()
- * @param Record|string $record
+ * @param Omeka_Record_AbstractRecord|string $record
  * @param array $order If empty, uses the order of the plugin ItemOrder if
  * enabled, or the default order set in the config of the plugin. Else, it
  * should be an array with an element set name and an element name, with an
