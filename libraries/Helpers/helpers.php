@@ -27,8 +27,7 @@ function link_to_previous($record = null, $order = array(), $text = null, $props
         if (empty($record)) {
             return '';
         }
-    }
-    elseif (is_string($record)) {
+    } elseif (is_string($record)) {
         $record = get_current_record($record, false);
         if (empty($record)) {
             return '';
@@ -102,8 +101,7 @@ function link_to_next($record = null, $order = array(), $text = null, $props = a
         if (empty($record)) {
             return '';
         }
-    }
-    elseif (is_string($record)) {
+    } elseif (is_string($record)) {
         $record = get_current_record($record, false);
         if (empty($record)) {
             return '';

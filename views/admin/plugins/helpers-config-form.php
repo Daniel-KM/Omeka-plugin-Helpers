@@ -9,10 +9,12 @@
                     'record_types' => array('Item', 'All'),
                     'sort' => 'alphaBySet',
                 ));
-                echo $this->formSelect('helpers_order_element',
+                echo $this->formSelect(
+                    'helpers_order_element',
                     $orderElement,
                     array(),
-                    $elements);
+                    $elements
+                );
             ?>
         </div>
     </div>
@@ -21,7 +23,7 @@
             <?php echo $this->formLabel('helpers_order_by_collection', __('Order by collection')); ?>
         </div>
         <div class='inputs five columns omega'>
-            <?php echo $this->formCheckbox('helpers_order_by_collection', true, array('checked' => (boolean) get_option('helpers_order_by_collection'))); ?>
+            <?php echo $this->formCheckbox('helpers_order_by_collection', true, array('checked' => (bool) get_option('helpers_order_by_collection'))); ?>
         </div>
     </div>
 </fieldset>

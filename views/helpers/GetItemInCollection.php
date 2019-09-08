@@ -13,11 +13,11 @@ class Helpers_View_Helper_GetItemInCollection extends Zend_View_Helper_Abstract
      *
      * @todo Manage public / non public with Item Order?
      *
-     * @param Collection|integer $collection
-     * @param integer|string $position Position is an integer or a string
+     * @param Collection|int $collection
+     * @param int|string $position Position is an integer or a string
      * "first", "last", "previous", "next". Previous and next need an item.
      * When integer, the first item is 1.
-     * @param Item|integer $item
+     * @param Item|int $item
      * @return Item|string|false
      * Empty string means it's the first item, so there is no previous.
      * False means the previous is not determinable (Item Order is not used for

@@ -19,7 +19,7 @@ class Helpers_View_Helper_GetPreviousItem extends Zend_View_Helper_Abstract
      * @param string $elementSetName If empty, order will be the default one.
      * If Item order plugin is enabled, it will be used and order will be by collection.
      * @param string $elementName
-     * @param boolean $orderByCollection
+     * @param bool $orderByCollection
      * @return Item|null
      */
     public function getPreviousItem($item = null, $elementSetName = '', $elementName = '', $orderByCollection = true)
@@ -34,7 +34,7 @@ class Helpers_View_Helper_GetPreviousItem extends Zend_View_Helper_Abstract
         // Order via item order plugin.
         if (empty($elementSetName)) {
             if ($item->collection_id && plugin_is_active('ItemOrder')) {
-                $previous = $this-> _getPreviousItemViaItemOrder($item);
+                $previous = $this->_getPreviousItemViaItemOrder($item);
                 if ($previous !== false) {
                     return $previous;
                 }
@@ -50,15 +50,13 @@ class Helpers_View_Helper_GetPreviousItem extends Zend_View_Helper_Abstract
         // In case of error, the default item is returned.
         if (empty($element)) {
             $previous = $item->previous();
-        }
-        else {
+        } else {
             $elementText = metadata($item, array($elementSetName, $elementName));
 
             // TODO Use filters for user or use regular methods (get_record_by_id() checks it).
             if (!(is_admin_theme() || current_user())) {
                 $sqlWhereIsPublic = 'AND items.public = 1';
-            }
-            else {
+            } else {
                 $sqlWhereIsPublic = '';
             }
 
@@ -77,8 +75,7 @@ class Helpers_View_Helper_GetPreviousItem extends Zend_View_Helper_Abstract
                 $sqlOrderByCollection = "
                     IF (items.collection_id = ?, 1, 0) DESC,
                 ";
-            }
-            else {
+            } else {
                 $bind = array(
                     $element->id,
                     $item->id,
@@ -212,16 +209,14 @@ class Helpers_View_Helper_GetPreviousItem extends Zend_View_Helper_Abstract
         // TODO Use filters for user or use regular methods (get_record_by_id() checks it).
         if (!(is_admin_theme() || current_user())) {
             $sqlWhereIsPublic = 'AND collections.public = 1';
-        }
-        else {
+        } else {
             $sqlWhereIsPublic = '';
         }
 
         if ($withItems) {
             // LEFT JOIN is enough to get collections with items.
             $sqlFromWithItems = "LEFT JOIN {$db->Item} items ON collections.id = items.collection_id";
-        }
-        else {
+        } else {
             $sqlFromWithItems = '';
         }
 
