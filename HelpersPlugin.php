@@ -112,10 +112,7 @@ class HelpersPlugin extends Omeka_Plugin_AbstractPlugin
     {
         static $items = array();
 
-        if (is_admin_theme()) {
-            return;
-        }
-
+        /** @var Item $item */
         $item = $args['item'];
 
         // Avoid an infinite loop in some cases.
@@ -123,8 +120,11 @@ class HelpersPlugin extends Omeka_Plugin_AbstractPlugin
             return $items[$item->id];
         }
 
-        $previousItem = get_view()->getPreviousItem($item);
-        $items[$item->id] = $previousItem;
+        $previousItem = is_admin_theme()
+            ? get_db()->getTable('Item')->findPrevious($item)
+            : get_view()->getPreviousItem($item);
+
+        $items[$item->id] = $previousItem ?: false;
         return $previousItem;
     }
 
@@ -132,10 +132,7 @@ class HelpersPlugin extends Omeka_Plugin_AbstractPlugin
     {
         static $items = array();
 
-        if (is_admin_theme()) {
-            return;
-        }
-
+        /** @var Item $item */
         $item = $args['item'];
 
         // Avoid an infinite loop in some cases.
@@ -143,8 +140,11 @@ class HelpersPlugin extends Omeka_Plugin_AbstractPlugin
             return $items[$item->id];
         }
 
-        $nextItem = get_view()->getNextItem($item);
-        $items[$item->id] = $nextItem;
+        $nextItem = is_admin_theme()
+            ? get_db()->getTable('Item')->findNext($item)
+            : get_view()->getNextItem($item);
+
+        $items[$item->id] = $nextItem ?: false;
         return $nextItem;
     }
 }
