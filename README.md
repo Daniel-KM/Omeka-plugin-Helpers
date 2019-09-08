@@ -86,18 +86,10 @@ This Agreement may be freely reproduced and published, provided it is not
 altered, and that no provisions are either added or removed herefrom.
 
 
-Contact
--------
-
-Current maintainers:
-
-* Daniel Berthereau (see [Daniel-KM] on GitHub)
-
-
 Copyright
 ---------
 
-* Copyright Daniel Berthereau, 2012-2018
+* Copyright Daniel Berthereau, 2012-2019 (see [Daniel-KM] on GitHub)
 
 
 [Helpers]: https://github.com/Daniel-KM/Omeka-plugin-Helpers
